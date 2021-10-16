@@ -60,5 +60,7 @@ def plot_examples(colormaps):
 
 
 if __name__ == "__main__":
-    cmap = ListedColormap(["darkorange", "gold", "lawngreen", "lightseagreen"])
-    plot_examples([cmap])
+    # cmap = ListedColormap(["darkorange", "gold", "lawngreen", "lightseagreen"])
+    # plot_examples([cmap])
+
+    build_img()
