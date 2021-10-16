@@ -11,10 +11,10 @@ a = [[0, 2, 4, i],
      [2, 5, 0, 1],
      [i, i, 3, 0]]
 
-p = [[1, 2, 3, 4],
+p = [[1, 2, 3, 0],
+     [1, 2, 0, 4],
      [1, 2, 3, 4],
-     [1, 2, 3, 4],
-     [1, 2, 3, 4]]
+     [0, 0, 3, 4]]
 
 s = 20*'-'
 
@@ -34,7 +34,6 @@ def pretty_print(mat, name):
 def floyd_warshall(a, p):
     """
     Floyd Warshall method
-
     :param a: list[list]] - A matrix
     :param p: list[list]] - P matrix
     :return:
@@ -46,10 +45,11 @@ def floyd_warshall(a, p):
                 if a[u][v] > (a[u][j] + a[j][v]):
                     print(f'{a[u][v]} is greater than {(a[u][j] + a[j][v])}! '
                           f'Updating {a[u][v]} to {(a[u][j] + a[j][v])}!')
-                    # do something
+                    # update the a matrix
                     a[u][v] = (a[u][j] + a[j][v])
+                    print(f'Updating P matrix: {p[u][v]} to {(p[u][j])}!')
+                    # update the p matrix
                     p[u][v] = p[u][j]
-
                 else:
                     print(f'...{a[u][v]} is less than than {(a[u][j] + a[j][v])}...')
 
@@ -57,7 +57,9 @@ def floyd_warshall(a, p):
 
 
 if __name__ == "__main__":
+
+    pretty_print(mat=a, name='ORIGINAL MATRIX A')
+    pretty_print(mat=p, name='ORIGINAL MATRIX P')
     a, p = floyd_warshall(a=a, p=p)
     pretty_print(mat=a, name='NEW MATRIX A')
     pretty_print(mat=p, name='NEW MATRIX P')
-
