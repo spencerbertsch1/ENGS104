@@ -38,10 +38,14 @@ def floyd_warshall(a, p):
     :param p: list[list]] - P matrix
     :return:
     """
-    for j in range(len(a[0])):
+    V = range(len(a[0]))
+    for j in V:
         print(f'\n\n{s}  j={j+1}  {s}')
-        for u in (1, 2, 3):
-            for v in (1, 2, 3):
+        v_copy = list(V).copy()
+        v_copy.remove(j)
+
+        for u in v_copy:
+            for v in v_copy:
                 if a[u][v] > (a[u][j] + a[j][v]):
                     print(f'{a[u][v]} is greater than {(a[u][j] + a[j][v])}! '
                           f'Updating {a[u][v]} to {(a[u][j] + a[j][v])}!')
