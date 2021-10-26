@@ -64,3 +64,8 @@ if __name__ == "__main__":
     # plot_examples([cmap])
 
     build_img()
+    # TODO clean up this old code and create dirver script that:
+    # 1. reads a chosen image
+    # 2. runs dijkstras to find the shortest path
+    # 3. saves a png of the image with the path superimposed
+    # 4. creates an animation of the path being generated
