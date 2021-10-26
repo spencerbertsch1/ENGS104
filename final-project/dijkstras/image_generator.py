@@ -38,6 +38,9 @@ def build_img(img_size: int, land_density: float, path_to_image: str):
     info = np.iinfo(data.dtype)  # Get the information of the incoming image type
     data = data.astype(np.float64) / info.max  # normalize the data to 0 - 1
     data = 255 * data  # Now scale by 255
+
+    # TODO replace all [255,255,255] pixels with [102, 51, 0] pixels and replace the water as well
+
     img = data.astype(np.uint8)
     cv2.imwrite(path_to_image, img)
     print(f'Image successfully saved at the following location: \n {path_to_image}')
