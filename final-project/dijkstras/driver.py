@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 import numpy as np
 
-from routines import image_reader, image_to_adjacency_matrix
+from routines import image_reader, image_to_adjacency_list
 
 random.seed(38)
 
@@ -22,8 +22,8 @@ def driver(image_name: str):
     # STEP 1. Read a chosen image
     image: np.ndarray = image_reader(ABSPATH_TO_IMG=ABSPATH_TO_IMG)
 
-    # STEP 2: Convert the image to an incidence matrix
-    i_matrix: np.ndarray = image_to_adjacency_matrix(img=image)
+    # STEP 2: Convert the image to an adjacency list
+    adj_list: dict = image_to_adjacency_list(img=image, distance=1, use_bresenhams=False)
 
     # STEP 3: Runs dijkstras to find the shortest path
     # TODO
