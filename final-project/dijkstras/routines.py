@@ -22,12 +22,18 @@ def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
     return new_image
 
 
-def image_to_adjacency_matrix(img: np.ndarray) -> np.ndarray:
-    print('Converting image to adjacency matrix')
+def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool) -> dict:
+    """
+    Take a jpeg image and return an adjacency list representation of the graph that the image represents
+
+    :param img: np.ndarray representation of loaded image
+    :param distance: int representing the distance neighbors gathered in the get_neighbors function
+    :return: dictionary - adjacency list for the graph
+    """
+    print('Converting image to adjacency list')
 
     # initialize new list that will store lists, then later we will convert this back to np.ndarray
     new_array: list = []
-
     # flatten the pixels into a single number between 0 and 1
     for i in img:
         row: list = []
@@ -44,9 +50,44 @@ def image_to_adjacency_matrix(img: np.ndarray) -> np.ndarray:
     # convert the new_array list of lists into an np.ndarray
     flat_img: np.ndarray = np.array(new_array)
 
-    print('something')
+    def find_neighbor_indices(m, i, j, dist=distance):
+        # thanks to Pyrce from stackoverflow here: bit.ly/3Ek3NzO
+        neighbors = []
+        irange = range(max(0, i-dist), min(len(m), i+dist+1))
+        if len(m) > 0:
+            jrange = range(max(0, j-dist), min(len(m[0]), j+dist+1))
+        else:
+            jrange = []
+        for icheck in irange:
+            for jcheck in jrange:
+                # Skip when i==icheck and j==jcheck
+                if icheck != i or jcheck != j:
+                    neighbors.append((icheck, jcheck))
+        return neighbors
 
-    return flat_img
+    # now it's time to create the adjacency list!
+    adjacency_list = {}
+    for i in range(len(new_array)):
+        for j in range(len(new_array)):
+            # get neighbors of current cell
+            neighbors: list = find_neighbor_indices(new_array, i, j)
+            valid_neighbors = []
+            for n in neighbors:
+                if new_array[n[0]][n[1]] == 1:
+                    valid_neighbors.append(n)
+
+            # TODO implement use_bresenhams line algorithm to discount any squares
+            #  if we pass through a block to get there
+            if use_bresenhams:
+                # Here we would prune the cells in valid_neighbors to ONLY those achievable
+                # through a straight line without hitting a blocker
+                pass
+
+            # add the cell-list pair to the adjacency list dictionary
+            cell: tuple = (i, j)
+            adjacency_list[cell] = valid_neighbors
+
+    return adjacency_list
 
 
 def dijkstras():
