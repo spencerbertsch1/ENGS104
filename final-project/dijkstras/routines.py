@@ -22,9 +22,31 @@ def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
     return new_image
 
 
-def image_to_adjacency_matrix():
-    pass
-    # TODO write a function that converts an rgb image into an adjacency matrix
+def image_to_adjacency_matrix(img: np.ndarray) -> np.ndarray:
+    print('Converting image to adjacency matrix')
+
+    # initialize new list that will store lists, then later we will convert this back to np.ndarray
+    new_array: list = []
+
+    # flatten the pixels into a single number between 0 and 1
+    for i in img:
+        row: list = []
+        for j in i:
+            if j[0] != 0:
+                pixel_value = 1
+            else:
+                pixel_value = 0
+            # append the new, binary pixel value to the row list
+            row.append(pixel_value)
+        # append the row list to the outer new_array list
+        new_array.append(row)
+
+    # convert the new_array list of lists into an np.ndarray
+    flat_img: np.ndarray = np.array(new_array)
+
+    print('something')
+
+    return flat_img
 
 
 def dijkstras():
