@@ -1,3 +1,7 @@
+# Spencer Bertsch
+# Dartmouth College
+# ENGS 104, Fall 2021
+# Final Project
 
 from pathlib import Path
 import time

@@ -1,3 +1,7 @@
+# Spencer Bertsch
+# Dartmouth College
+# ENGS 104, Fall 2021
+# Final Project
 
 import random
 from pathlib import Path
@@ -31,6 +35,10 @@ def driver(image_name: str):
     # STEP 4: Save a png of the image with the path superimposed
     # TODO - massage the path into a list of 4-length tuples (x1, y1, x2, y2)
     # TODO - call the path plotter to see the shortest path on the image
+
+    # STEP 5: Use simulatioin to do the following:
+    # Understand the relationship between the distance value when finding the adjacency list and the path length.
+    # Understand how
 
     # STEP 5: creates an animation of the path being generated
     # TODO

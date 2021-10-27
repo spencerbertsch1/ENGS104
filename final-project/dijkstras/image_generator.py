@@ -1,7 +1,7 @@
 # Spencer Bertsch
 # Dartmouth College
 # ENGS 104, Fall 2021
-# Final Project Part I
+# Final Project
 
 import numpy as np
 import random
