@@ -47,7 +47,7 @@ def build_img(img_size: int, land_density: float, path_to_image: str):
 
 
 if __name__ == "__main__":
-
+    # TODO ensure JPEG is not compressed
     # we can change the random seed to alter how the image looks
     random.seed(38)
     ABSPATH_TO_IMG: Path = PATH_TO_THIS_FILE.parent / 'images' / "image2.png"
