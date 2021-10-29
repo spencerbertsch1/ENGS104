@@ -1,0 +1,104 @@
+# define variables here 
+var x1 binary; 
+var x2 binary; 
+var x3 binary; 
+var x4 binary; 
+var x5 binary; 
+var x6 binary; 
+var x7 binary; 
+var x8 binary; 
+var x9 binary; 
+var x10 binary; 
+var x11 binary; 
+var x12 binary; 
+var x13 binary; 
+var x14 binary; 
+var x15 binary; 
+var x16 binary; 
+var x17 binary; 
+var x18 binary; 
+var x19 binary; 
+var x20 binary; 
+var x21 binary; 
+var x22 binary; 
+var x23 binary; 
+var x24 binary; 
+var x25 binary; 
+var x26 binary; 
+var x27 binary; 
+var x28 binary; 
+var x29 binary; 
+var x30 binary; 
+var x31 binary; 
+var x32 binary; 
+var x33 binary; 
+var x34 binary; 
+var x35 binary; 
+var x36 binary; 
+var x37 binary; 
+var x38 binary; 
+var x39 binary; 
+var x40 binary; 
+var x41 binary; 
+var x42 binary; 
+var x43 binary; 
+var x44 binary; 
+var x45 binary; 
+var x46 binary; 
+var x47 binary; 
+var x48 binary; 
+var x49 binary; 
+var x50 binary; 
+var x51 binary; 
+var x52 binary; 
+var x53 binary; 
+var x54 binary; 
+var x55 binary; 
+var x56 binary; 
+var x57 binary; 
+var x58 binary; 
+var x59 binary; 
+var x60 binary; 
+var x61 binary; 
+var x62 binary; 
+var x63 binary; 
+var x64 binary; 
+var x65 binary; 
+var x66 binary; 
+var x67 binary; 
+var x68 binary; 
+var x69 binary; 
+var x70 binary; 
+var x71 binary; 
+var x72 binary; 
+
+# now we want to maximize the score for each student 
+maximize student_scores: 
+5*x1 + 8*x2 + 2*x3 + 10*x4 + 10*x5 + 7*x6 + 5*x7 + 1*x8 + 3*x9 + 10*x10 + 8*x11 + 8*x12 + 10*x13 + 6*x14 + 2*x15 + 10*x16 + 2*x17 + 10*x18 + 9*x19 + 4*x20 + 6*x21 + 10*x22 + 6*x23 + 6*x24 + 10*x25 + 7*x26 + 1*x27 + 5*x28 + 4*x29 + 6*x30 + 8*x31 + 10*x32 + 7*x33 + 10*x34 + 3*x35 + 10*x36 + 1*x37 + 2*x38 + 4*x39 + 10*x40 + 6*x41 + 9*x42 + 10*x43 + 3*x44 + 4*x45 + 7*x46 + 2*x47 + 10*x48 + 10*x49 + 8*x50 + 3*x51 + 7*x52 + 10*x53 + 9*x54 + 8*x55 + 7*x56 + 7*x57 + 10*x58 + 4*x59 + 10*x60 + 10*x61 + 5*x62 + 5*x63 + 1*x64 + 10*x65 + 2*x66 + 6*x67 + 4*x68 + 10*x69 + 3*x70 + 7*x71 + 3*x72;
+
+# we can now add the constraints - one for each student. 
+subject to Student1: x1 + x2 + x3 + x4 = 1; 
+subject to Student2: x5 + x6 + x7 + x8 = 1; 
+subject to Student3: x9 + x10 + x11 + x12 = 1; 
+subject to Student4: x13 + x14 + x15 + x16 = 1; 
+subject to Student5: x17 + x18 + x19 + x20 = 1; 
+subject to Student6: x21 + x22 + x23 + x24 = 1; 
+subject to Student7: x25 + x26 + x27 + x28 = 1; 
+subject to Student8: x29 + x30 + x31 + x32 = 1; 
+subject to Student9: x33 + x34 + x35 + x36 = 1; 
+subject to Student10: x37 + x38 + x39 + x40 = 1; 
+subject to Student11: x41 + x42 + x43 + x44 = 1; 
+subject to Student12: x45 + x46 + x47 + x48 = 1; 
+subject to Student13: x49 + x50 + x51 + x52 = 1; 
+subject to Student14: x53 + x54 + x55 + x56 = 1; 
+subject to Student15: x57 + x58 + x59 + x60 = 1; 
+subject to Student16: x61 + x62 + x63 + x64 = 1; 
+subject to Student17: x65 + x66 + x67 + x68 = 1; 
+subject to Student18: x69 + x70 + x71 + x72 = 1; 
+
+
+# and finally we can add the lab constraints - one for each lab group. 
+subject to G1: x1 + x5 + x9 + x13 + x17 + x21 + x25 + x29 + x33 + x37 + x41 + x45 + x49 + x53 + x57 + x61 + x65 + x69 <= 4; 
+subject to G2: x2 + x6 + x10 + x14 + x18 + x22 + x26 + x30 + x34 + x38 + x42 + x46 + x50 + x54 + x58 + x62 + x66 + x70 <= 4; 
+subject to G3: x3 + x7 + x11 + x15 + x19 + x23 + x27 + x31 + x35 + x39 + x43 + x47 + x51 + x55 + x59 + x63 + x67 + x71 <= 7; 
+subject to G4: x4 + x8 + x12 + x16 + x20 + x24 + x28 + x32 + x36 + x40 + x44 + x48 + x52 + x56 + x60 + x64 + x68 + x72 <= 4; 
