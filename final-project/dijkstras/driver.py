@@ -17,7 +17,7 @@ PATH_TO_THIS_FILE: Path = Path(__file__).resolve()
 
 
 def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: str,
-           create_plot: bool, create_animation: bool, distance: int):
+           create_plot: bool, create_animation: bool, distance: int, use_bresenhams: bool):
     """
     Driver for the Shortest Path over Images project
 
@@ -44,7 +44,9 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
 
     # STEP 4: Save a png of the image with the path superimposed
     if create_plot:
-        save_solution_img(np_image=image, fpath=str(ABSPATH_TO_SOL_IMG), chain=solution.solution_path, show_img=True)
+        save_solution_img(np_image=image, fpath=str(ABSPATH_TO_SOL_IMG), chain=solution.solution_path, show_img=True,
+                          weight=solution.solution_path_weight, neighbor_distance=distance,
+                          use_bresenhams=use_bresenhams)
 
     # STEP 5: creates an animation of the path being generated
     if create_animation:
@@ -56,10 +58,11 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
 
 
 if __name__ == "__main__":
-    driver(image_name='image6.png',
+    driver(image_name='image30.png',
            distance=1,
            start_state=(0, 0),
-           end_state=(6, 6),  # <-- (29, 29), (6, 6)
-           weight_calc='euclidean',
+           end_state=(29, 29),  # <-- (29, 29), (6, 6)
+           weight_calc='euclidean',  # <-- 'euclidean' or 'manhattan'
+           use_bresenhams=False,
            create_plot=True,
            create_animation=False)
