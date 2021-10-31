@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # TODO ensure JPEG is not compressed
     # we can change the random seed to alter how the image looks
     random.seed(2)
-    side_length: int = 15
+    side_length: int = 50
     file_name: str = f"image{side_length}.png"
     ABSPATH_TO_IMG: Path = PATH_TO_THIS_FILE.parent / 'images' / file_name
-    build_img(img_size=side_length, land_density=1.07, path_to_image=str(ABSPATH_TO_IMG))
+    build_img(img_size=side_length, land_density=1.2, path_to_image=str(ABSPATH_TO_IMG))

@@ -175,7 +175,7 @@ def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
 
 
 def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool, weight_calc: str,
-                            num_neighbors: int) -> dict:
+                            four_neighbor_model: bool) -> dict:
     """
     Take a jpeg image and return an adjacency list representation of the graph that the image represents
 
@@ -270,7 +270,7 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
             neighbors_with_weights[neighbor_node] = weight
 
         # if we're using the 4-neighbor model, we remove diagonal neighbors
-        if num_neighbors == 4:
+        if four_neighbor_model:
             illegal_neighbors = []
             for neighbor, weight in neighbors_with_weights.items():
                 if weight != 1:
