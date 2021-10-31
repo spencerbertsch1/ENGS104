@@ -58,10 +58,10 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
 
 
 if __name__ == "__main__":
-    driver(image_name='image30.png',
+    driver(image_name='image6.png',
            distance=1,
            start_state=(0, 0),
-           end_state=(29, 29),  # <-- (29, 29), (6, 6)
+           end_state=(6, 6),  # <-- (29, 29), (6, 6)
            weight_calc='euclidean',  # <-- 'euclidean' or 'manhattan'
            use_bresenhams=False,
            create_plot=True,
