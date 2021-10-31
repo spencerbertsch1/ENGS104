@@ -15,6 +15,21 @@ import matplotlib.pyplot as cplot
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
 
+class Solution:
+
+    def __init__(self):
+        self.solution_path = None
+        self.solution_path_weight = 0
+        self.nodes_visited = 0
+
+    def __repr__(self):
+        s = f'-------- Dijkstra solution -------- \n' \
+            f'Weight of shortest path: {self.solution_path_weight} \n' \
+            f'Number of vertices visited during the search: {self.nodes_visited} \n' \
+            f'Shortest path from start to goal: {self.solution_path} \n'
+        return s
+
+
 class Node:
 
     def __init__(self, state: tuple, neighbors: dict):
@@ -54,16 +69,16 @@ class Graph:
         """
         return self.adj_list[state]
 
-    def dijkstra(self, start_location: tuple, end_location: tuple):
+    def dijkstra(self, start_state: tuple, end_state: tuple):
         """
         Nested dictionary adjacency list implementation of Dijkstra's algorithm.
 
-        :param start_location:
-        :param end_location:
+        :param start_state:
+        :param end_state:
         :return:
         """
         # we set the start vertex distance to zero
-        self.vertex_dict[start_location].distance = 0
+        self.vertex_dict[start_state].distance = 0
 
         # Put tuple pair into the priority queue
         unvisited_queue = []
@@ -75,11 +90,74 @@ class Graph:
         # we turn the list into a head here - heappush and heappop will use the __lr__ method in Node
         heapify(unvisited_queue)
 
+        # instantiate a solution object to update during search
+        sol = Solution()
+
         while len(unvisited_queue) > 0:
-            pass
+            # Pops a node with the smallest distance
+            node = heappop(unvisited_queue)
+            current_node = node[1]
+            # set the node to visited
+            current_node.visited = True
 
-        print('something')
+            if current_node.state == end_state:
+                # we have reached the goal!
+                solution_path: list = back_chaining(search_node=current_node)
+                sol.solution_path = solution_path
+                # TODO get final_path_weight
+                return sol
 
+            for neighbor_state, weight in current_node.neighbors.items():
+                sol.nodes_visited = sol.nodes_visited + 1
+                print(f'Currently exploring state {neighbor_state} with a weight of {weight}.')
+                # get the neighbor node from the neighbor state
+                neighbor_node = self.vertex_dict[neighbor_state]
+
+                # if we've already visited this node, then we can move on
+                if neighbor_node.visited is True:
+                    continue
+
+                new_distance = current_node.distance + weight
+
+                if new_distance < neighbor_node.distance:
+                    # we have found a shorter path to the new node! So we update the distance and parent
+                    neighbor_node.distance = new_distance
+                    neighbor_node.parent = current_node
+
+            # Lastly we need to rebuild the heap to reflect the changes we just made
+            # remove all nodes from the heap
+            while len(unvisited_queue) > 0:
+                heappop(unvisited_queue)
+            # add all of the nodes that have not yet been visited into the queue
+            unvisited_queue = []
+            for state, node in self.vertex_dict.items():
+                # if we've already visited a node, then we don't add it to the queue
+                if node.visited is True:
+                    continue
+                else:
+                    distance = node.distance
+                    d_n = (distance, node)
+                    unvisited_queue.append(d_n)
+            # heapify the list to turn it into a heap
+            heapify(unvisited_queue)
+
+            print('something')
+
+
+def back_chaining(search_node, chain=None) -> list:
+    # initialize empty path
+    if chain is None:
+        # add the goal state as the start of the chain
+        chain = [search_node.state]
+
+    # base case
+    if search_node.parent is None:
+        chain.reverse()
+        return chain
+
+    # recursive case
+    chain.append(search_node.parent.state)
+    return back_chaining(search_node=search_node.parent, chain=chain)
 
 
 def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
@@ -202,22 +280,6 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
         del new_adjacency_list[node_to_remove]
 
     return new_adjacency_list
-
-
-def dijkstras(adj_list: dict, start_vertex: tuple):
-    """
-    Implementation of dijkstra's algorithm on an adjacency list dictionary
-    :param adj_list: dict - map of all nodes to the nodes they are connected to
-    :return:
-    """
-    print(f'Beginning search using Dijkstra\'s algorithm! Starting from node {start_vertex}.')
-
-    # define p as the empty set
-    p = set()
-    # define v as a list of all the vertices in the graph
-    v = list(adj_list.keys())
-
-
 
 
 def plot_examples(colormaps):

@@ -9,7 +9,7 @@ from pathlib import Path
 import click
 import numpy as np
 
-from routines import image_reader, image_to_adjacency_list, dijkstras, Graph
+from routines import image_reader, image_to_adjacency_list, Graph
 
 random.seed(38)
 
@@ -31,7 +31,8 @@ def driver(image_name: str):
 
     # STEP 3: Runs dijkstras to find the shortest path
     g = Graph(adj_list=adj_list)
-    g.dijkstra(start_location=(0, 0), end_location=(6, 6))
+    solution = g.dijkstra(start_state=(0, 0), end_state=(6, 6))
+    print(solution)
 
     # STEP 4: Save a png of the image with the path superimposed
     # TODO - massage the path into a list of 4-length tuples (x1, y1, x2, y2)
