@@ -16,9 +16,15 @@ random.seed(38)
 PATH_TO_THIS_FILE: Path = Path(__file__).resolve()
 
 
-@click.command()
-@click.option('--image_name', default=None, help='Name of the image that will be used for Dijkstras.')
-def driver(image_name: str):
+def driver(image_name: str, start_state, end_state):
+    """
+    Driver for the Shortest Path over Images project
+
+    :param image_name: Name of the image that will be used for Dijkstras.
+    :param start_state: Tuple representing the (row. col) of the start position.
+    :param end_state: Tuple representing the (row. col) of the end position.
+    :return:
+    """
 
     print(f'Running Shortest Path analysis on: {image_name}')
     ABSPATH_TO_IMG: Path = PATH_TO_THIS_FILE.parent / 'images' / image_name
@@ -31,7 +37,7 @@ def driver(image_name: str):
 
     # STEP 3: Runs dijkstras to find the shortest path
     g = Graph(adj_list=adj_list)
-    solution = g.dijkstra(start_state=(0, 0), end_state=(6, 6))
+    solution = g.dijkstra(start_state=start_state, end_state=end_state)
     print(solution)
 
     # STEP 4: Save a png of the image with the path superimposed
@@ -49,4 +55,4 @@ def driver(image_name: str):
 
 
 if __name__ == "__main__":
-    driver()
+    driver(image_name='image1.png', start_state=(0,0), end_state=(6,6))

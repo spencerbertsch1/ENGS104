@@ -104,19 +104,20 @@ class Graph:
                 # we have reached the goal!
                 solution_path: list = back_chaining(search_node=current_node)
                 sol.solution_path = solution_path
-                # TODO get final_path_weight
+                # get the weight of the final step to then goal node
+                weight_of_final_step = current_node.neighbors[solution_path[-2]]
+                sol.solution_path_weight = round(current_node.distance + weight_of_final_step, 2)
                 return sol
 
             for neighbor_state, weight in current_node.neighbors.items():
                 sol.nodes_visited = sol.nodes_visited + 1
-                print(f'Currently exploring state {neighbor_state} with a weight of {weight}.')
                 # get the neighbor node from the neighbor state
                 neighbor_node = self.vertex_dict[neighbor_state]
 
                 # if we've already visited this node, then we can move on
                 if neighbor_node.visited is True:
                     continue
-
+                # calculate the new shortest distance to the node
                 new_distance = current_node.distance + weight
 
                 if new_distance < neighbor_node.distance:
@@ -140,8 +141,6 @@ class Graph:
                     unvisited_queue.append(d_n)
             # heapify the list to turn it into a heap
             heapify(unvisited_queue)
-
-            print('something')
 
 
 def back_chaining(search_node, chain=None) -> list:
