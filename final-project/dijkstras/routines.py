@@ -6,6 +6,7 @@
 from pathlib import Path
 import time
 import math
+from heapq import heappush, heappop, heapify
 
 import numpy as np
 import cv2
@@ -18,15 +19,36 @@ class Node:
 
     def __init__(self, state: tuple):
         self.state = state
+        # initialize distance to infinity
+        self.distance = math.inf
+        self.visited = False
+        self.parent = None
+
+    # we need a less than method so when we heappush and heappop it will compare the distances of the nodes
+    def __lt__(self, other):
+        return self.distance < other.distance
 
 
 class Graph:
 
-    def __init__(self, num_v: int):
-        self.num_v = num_v
+    def __init__(self, adj_list: dict):
+        self.graph = adj_list
+        self.num_v = len(list(adj_list.keys()))
 
-    def dijkstra(self):
-        pass
+    def dijkstra(self, start_location: tuple, end_location: tuple):
+
+        start_node = Node(state=start_location)
+        # the distance from the start to itself is 0
+        start_node.distance = 0
+
+
+        # initialize the heap of edges
+        edge_heap = []
+        heappush(edge_heap, start_node)
+        # our frontier needs to be a heap, so we can use heapify here to transform it
+        heapify(edge_heap)
+
+
 
 def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
     """
@@ -45,9 +67,22 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
     """
     Take a jpeg image and return an adjacency list representation of the graph that the image represents
 
+    The nodes here are stored as nested dicts. Each node stores a state - a 2 length tuple representing
+    a row/column for the given state. It maps to a dictionary of all neighbors and weights. Neighbors are
+    also tuples of length 2, and the values are floats representing edge weights.
+
+    adj_list: dict = {
+        (0,0): {            <--- Node
+            (0,1): 1,       <--- Neighbor and corresponding edge weight
+            (1,0): 1        <--- Neighbor and corresponding edge weight
+            (1,1): 1.41     <--- Neighbor and corresponding edge weight
+        },
+        ...
+    }
+
     :param img: np.ndarray representation of loaded image
     :param distance: int representing the distance neighbors gathered in the get_neighbors function
-    :return: dictionary - adjacency list for the graph. Nodes are of the form (row, col, weight)
+    :return: dictionary - adjacency list for the graph. Nodes are dictionaries of dictionaries
     """
     print('Converting image to adjacency list')
 
@@ -109,7 +144,7 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
     # add the path weights as either the euclidean or the manhattan distance between nodes in the graph
     new_adjacency_list = {}
     for node, neighbors in adjacency_list.items():
-        neighbors_with_weights = []
+        neighbors_with_weights = {}
         for neighbor_node in neighbors:
             if weight_calc == 'euclidean':
                 weight: float = round((math.sqrt((neighbor_node[0] - node[0])**2 + (neighbor_node[1] - node[1])**2)), 3)
@@ -119,9 +154,8 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
                 raise Exception(f'The \'weight_calc\' parameter should be either \'euclidean\' or '
                                 f'\'manhattan\', not {weight_calc}')
 
-            # create the new node of the form: (row, col, weight)
-            new_node: tuple = (neighbor_node[0], neighbor_node[1], weight)
-            neighbors_with_weights.append(new_node)
+            # create the k-v pair representing the neighbor node and the edge weight to that node
+            neighbors_with_weights[neighbor_node] = weight
 
         # append the list of newly weighted nodes to the new adjacency list
         new_adjacency_list[node] = neighbors_with_weights
@@ -135,7 +169,7 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
     for node_to_remove in illegal_nodes:
         del new_adjacency_list[node_to_remove]
 
-    return adjacency_list
+    return new_adjacency_list
 
 
 def dijkstras(adj_list: dict, start_vertex: tuple):
