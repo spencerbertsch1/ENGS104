@@ -142,6 +142,8 @@ class Graph:
             # heapify the list to turn it into a heap
             heapify(unvisited_queue)
 
+        return 'No solution found.'
+
 
 def back_chaining(search_node, chain=None) -> list:
     # initialize empty path
@@ -296,20 +298,81 @@ def plot_examples(colormaps):
     plt.show()
 
 
-def animate_path(data: np.ndarray):
+def animate_path(np_image: np.ndarray, fpath: str, chain: list, save_final_img: bool):
+    # get a list of edges from the list of states
+    edges = []
+    for i in range(len(chain)):
+        if i == 0:
+            continue
+        # find x1, x2, y1, and y2
+        x1: int = chain[i-1][0]
+        y1: int = chain[i-1][1]
+        x2: int = chain[i][0]
+        y2: int = chain[i][1]
+        # create a new edge of the form: (x1, y1, x2, y2)
+        new_edge: tuple = (x1, y1, x2, y2)
+        edges.append(new_edge)
+
     processed_lines = []
-    # this is what dijkstra's will return
-    lines = [(0, 0, 1, 0), (1, 0, 2, 0), (2, 0, 3, 0), (3, 0, 3, 1)]
-    for line in lines:
+    for edge in edges:
         # (x1, y1, x2, y2)
-        # draw the shortest path!
-        x = [line[0], line[2]]
-        y = [line[1], line[3]]
+        # draw the shortest path
+        y = [edge[0], edge[2]]
+        x = [edge[1], edge[3]]
         processed_lines.append((x, y))
         for line in processed_lines:
-            plt.plot(line[0], line[1], color="red", linewidth=5)
+            plt.plot(line[0], line[1], color="red", linewidth=3)
 
         # create the image  # cmaps: 'BrBG', 'BrBG_r'
-        plt.imshow(data, cmap=cplot.cm.winter, interpolation='nearest', origin='lower')
+        plt.imshow(np_image, origin='lower')
         plt.show()
-        time.sleep(0.5)
+        time.sleep(0.1)
+
+    if save_final_img:
+        # we can now save the final image to the solutions directory
+        for line in processed_lines:
+            plt.plot(line[0], line[1], color="red", linewidth=3)
+
+        plt.imshow(np_image, origin='lower')
+        plt.savefig(fpath)
+
+
+def save_solution_img(np_image: np.ndarray, fpath: str, chain: list, show_img: bool, weight: float,
+                      neighbor_distance: int, use_bresenhams: bool):
+    # get a list of edges from the list of states
+    edges = []
+    for i in range(len(chain)):
+        if i == 0:
+            continue
+        # find x1, x2, y1, and y2
+        x1: int = chain[i-1][0]
+        y1: int = chain[i-1][1]
+        x2: int = chain[i][0]
+        y2: int = chain[i][1]
+        # create a new edge of the form: (x1, y1, x2, y2)
+        new_edge: tuple = (x1, y1, x2, y2)
+        edges.append(new_edge)
+
+    processed_lines = []
+    for edge in edges:
+        # (x1, y1, x2, y2)
+        # draw the shortest path
+        y = [edge[0], edge[2]]
+        x = [edge[1], edge[3]]
+        processed_lines.append((x, y))
+
+    # we can now save the final image to the solutions directory
+    for line in processed_lines:
+        plt.plot(line[0], line[1], color="red", linewidth=3)
+
+    plt.imshow(np_image, origin='lower')
+    plt.title(f'SP-Weight: {weight}, Neighbor-Distance: {neighbor_distance}, \n Bresenhams: {use_bresenhams}',
+              fontsize=13)
+
+    # uncomment the below line to save as a svg (better resolution on papers and slide decks)
+    fpath = f'{fpath[:-4]}.svg'
+    plt.savefig(fpath)
+
+    # show the image after it's saved, otherwise the saved image will be blank
+    if show_img:
+        plt.show()
