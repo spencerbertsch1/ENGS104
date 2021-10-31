@@ -5,6 +5,7 @@
 
 from pathlib import Path
 import time
+import math
 
 import numpy as np
 import cv2
@@ -12,6 +13,20 @@ from matplotlib import pyplot as plt
 import matplotlib.pyplot as cplot
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
+
+class Node:
+
+    def __init__(self, state: tuple):
+        self.state = state
+
+
+class Graph:
+
+    def __init__(self, num_v: int):
+        self.num_v = num_v
+
+    def dijkstra(self):
+        pass
 
 def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
     """
@@ -26,13 +41,13 @@ def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
     return new_image
 
 
-def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool) -> dict:
+def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool, weight_calc: str) -> dict:
     """
     Take a jpeg image and return an adjacency list representation of the graph that the image represents
 
     :param img: np.ndarray representation of loaded image
     :param distance: int representing the distance neighbors gathered in the get_neighbors function
-    :return: dictionary - adjacency list for the graph
+    :return: dictionary - adjacency list for the graph. Nodes are of the form (row, col, weight)
     """
     print('Converting image to adjacency list')
 
@@ -91,12 +106,52 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
             cell: tuple = (i, j)
             adjacency_list[cell] = valid_neighbors
 
+    # add the path weights as either the euclidean or the manhattan distance between nodes in the graph
+    new_adjacency_list = {}
+    for node, neighbors in adjacency_list.items():
+        neighbors_with_weights = []
+        for neighbor_node in neighbors:
+            if weight_calc == 'euclidean':
+                weight: float = round((math.sqrt((neighbor_node[0] - node[0])**2 + (neighbor_node[1] - node[1])**2)), 3)
+            elif weight_calc == 'manhattan':
+                weight: float = round(abs(neighbor_node[0] - node[0]) + abs(neighbor_node[1] - node[1]), 3)
+            else:
+                raise Exception(f'The \'weight_calc\' parameter should be either \'euclidean\' or '
+                                f'\'manhattan\', not {weight_calc}')
+
+            # create the new node of the form: (row, col, weight)
+            new_node: tuple = (neighbor_node[0], neighbor_node[1], weight)
+            neighbors_with_weights.append(new_node)
+
+        # append the list of newly weighted nodes to the new adjacency list
+        new_adjacency_list[node] = neighbors_with_weights
+
+    # and lastly we want to remove the nodes that are'nt legal nodes
+    illegal_nodes = []
+    for node in new_adjacency_list.keys():
+        if new_array[node[0]][node[1]] == 0:
+            illegal_nodes.append(node)
+    # and we can now remove the illegal nodes from the new_adjacency_list
+    for node_to_remove in illegal_nodes:
+        del new_adjacency_list[node_to_remove]
+
     return adjacency_list
 
 
-def dijkstras():
-    pass
-    # TODO implement dijkstras for an adjacency matrix
+def dijkstras(adj_list: dict, start_vertex: tuple):
+    """
+    Implementation of dijkstra's algorithm on an adjacency list dictionary
+    :param adj_list: dict - map of all nodes to the nodes they are connected to
+    :return:
+    """
+    print(f'Beginning search using Dijkstra\'s algorithm! Starting from node {start_vertex}.')
+
+    # define p as the empty set
+    p = set()
+    # define v as a list of all the vertices in the graph
+    v = list(adj_list.keys())
+
+
 
 
 def plot_examples(colormaps):
