@@ -17,12 +17,13 @@ from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
 class Node:
 
-    def __init__(self, state: tuple):
+    def __init__(self, state: tuple, neighbors: dict):
         self.state = state
         # initialize distance to infinity
         self.distance = math.inf
         self.visited = False
         self.parent = None
+        self.neighbors = neighbors
 
     # we need a less than method so when we heappush and heappop it will compare the distances of the nodes
     def __lt__(self, other):
@@ -32,21 +33,52 @@ class Node:
 class Graph:
 
     def __init__(self, adj_list: dict):
-        self.graph = adj_list
-        self.num_v = len(list(adj_list.keys()))
+        # nested dictionary storing vertices, neighbors, the edge weights
+        self.adj_list = adj_list
+        self.num_vertices = len(list(adj_list.keys()))
+        # dictionary mapping states to nodes
+        self.vertex_dict = self.generate_vertex_dict()
+
+    def generate_vertex_dict(self):
+        v_dict = {}
+        for state, neighbors in self.adj_list.items():
+            new_node = Node(state=state, neighbors=neighbors)
+            v_dict[state] = new_node
+        return v_dict
+
+    def get_neighbors(self, state):
+        """
+        Returns the dictionary representation of all neighbors of the state and the edge weights
+        :param state: tuple of length 2 (row, col)
+        :return: dict - neighbors of the state that was passed in
+        """
+        return self.adj_list[state]
 
     def dijkstra(self, start_location: tuple, end_location: tuple):
+        """
+        Nested dictionary adjacency list implementation of Dijkstra's algorithm.
 
-        start_node = Node(state=start_location)
-        # the distance from the start to itself is 0
-        start_node.distance = 0
+        :param start_location:
+        :param end_location:
+        :return:
+        """
+        # we set the start vertex distance to zero
+        self.vertex_dict[start_location].distance = 0
 
+        # Put tuple pair into the priority queue
+        unvisited_queue = []
+        for state, node in self.vertex_dict.items():
+            distance = node.distance
+            d_n = (distance, node)
+            unvisited_queue.append(d_n)
 
-        # initialize the heap of edges
-        edge_heap = []
-        heappush(edge_heap, start_node)
-        # our frontier needs to be a heap, so we can use heapify here to transform it
-        heapify(edge_heap)
+        # we turn the list into a head here - heappush and heappop will use the __lr__ method in Node
+        heapify(unvisited_queue)
+
+        while len(unvisited_queue) > 0:
+            pass
+
+        print('something')
 
 
 
