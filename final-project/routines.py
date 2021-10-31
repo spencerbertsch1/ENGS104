@@ -174,7 +174,8 @@ def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
     return new_image
 
 
-def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool, weight_calc: str) -> dict:
+def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool, weight_calc: str,
+                            num_neighbors: int) -> dict:
     """
     Take a jpeg image and return an adjacency list representation of the graph that the image represents
 
@@ -267,6 +268,16 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
 
             # create the k-v pair representing the neighbor node and the edge weight to that node
             neighbors_with_weights[neighbor_node] = weight
+
+        # if we're using the 4-neighbor model, we remove diagonal neighbors
+        if num_neighbors == 4:
+            illegal_neighbors = []
+            for neighbor, weight in neighbors_with_weights.items():
+                if weight != 1:
+                    illegal_neighbors.append(neighbor)
+            # remove the nodes on the diagonal from the graph
+            for n in illegal_neighbors:
+                del neighbors_with_weights[n]
 
         # append the list of newly weighted nodes to the new adjacency list
         new_adjacency_list[node] = neighbors_with_weights
