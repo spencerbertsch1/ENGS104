@@ -77,6 +77,7 @@ class Graph:
         :param end_state:
         :return:
         """
+        print(f'Running Dijkstra\'s algorithm on image data')
         # we set the start vertex distance to zero
         self.vertex_dict[start_state].distance = 0
 
