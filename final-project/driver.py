@@ -28,7 +28,7 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
 
     print(f'Running Shortest Path analysis on: {image_name}')
     if simulation == 'sparse':
-        ABSPATH_TO_IMG: Path = ABSPATH_TO_SPARSE_IMAGES / 'sparse_imgs' / image_name
+        ABSPATH_TO_IMG: Path = ABSPATH_TO_SPARSE_IMAGES / image_name
     else:
         ABSPATH_TO_IMG: Path = ABSPATH_TO_IMAGES / image_name
     ABSPATH_TO_SOL_IMG: Path = ABSPATH_TO_SOL_IMAGES / image_name
@@ -68,7 +68,7 @@ if __name__ == "__main__":
            start_state=(0, 0),
            end_state=(29, 29),  # <-- (29, 29), (6, 6), ...
            weight_calc='euclidean',  # <-- 'euclidean' or 'manhattan'
-           four_neighbor_model=True,  # <-- 4-neighbor model or 8-neighbor model. Only use 4-neighbor when distance=1
+           four_neighbor_model=False,  # <-- 4-neighbor model or 8-neighbor model. Only use 4-neighbor when distance=1
            use_bresenhams=True,
            create_plot=True,
            create_animation=False,
