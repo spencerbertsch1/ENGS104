@@ -105,9 +105,13 @@ class Graph:
                 # we have reached the goal!
                 solution_path: list = back_chaining(search_node=current_node)
                 sol.solution_path = solution_path
-                # get the weight of the final step to then goal node
-                weight_of_final_step = current_node.neighbors[solution_path[-2]]
-                sol.solution_path_weight = round(current_node.distance + weight_of_final_step, 2)
+                if len(solution_path) == 1:
+                    # no path to the goal exists
+                    sol.solution_path_weight = 1000
+                else:
+                    # get the weight of the final step to then goal node
+                    weight_of_final_step = current_node.neighbors[solution_path[-2]]
+                    sol.solution_path_weight = round(current_node.distance + weight_of_final_step, 2)
                 return sol
 
             for neighbor_state, weight in current_node.neighbors.items():
