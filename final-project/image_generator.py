@@ -46,11 +46,29 @@ def build_img(img_size: int, land_density: float, path_to_image: str):
     print(f'Image successfully saved at the following location: \n {path_to_image}')
 
 
+def generate_sparse_images(side_length: int):
+    """
+    Generates many sparse images with varying densities for simulation testing
+
+    :param side_length: number of pixels per side for the square images created
+    :return:
+    """
+    num_images_per_density = 9
+
+    for i in np.arange(3, 1.0, -0.1):
+        i = round(i, 2)
+        for j in range(num_images_per_density):
+            j += 1
+            file_name: str = f"image{side_length}_density{i}_{j}.png"
+            ABSPATH_TO_IMG: Path = PATH_TO_THIS_FILE.parent / 'images' / 'sparse_imgs' / file_name
+            build_img(img_size=side_length, land_density=i, path_to_image=str(ABSPATH_TO_IMG))
+
+
 if __name__ == "__main__":
-    # TODO ensure JPEG is not compressed
+
     # we can change the random seed to alter how the image looks
     random.seed(2)
-    side_length: int = 50
-    file_name: str = f"image{side_length}.png"
-    ABSPATH_TO_IMG: Path = PATH_TO_THIS_FILE.parent / 'images' / file_name
-    build_img(img_size=side_length, land_density=1.2, path_to_image=str(ABSPATH_TO_IMG))
+    side_length: int = 20
+
+    # generate the sparse imaged we will use for testing
+    generate_sparse_images(side_length=side_length)
