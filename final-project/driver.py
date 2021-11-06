@@ -10,15 +10,13 @@ import click
 import numpy as np
 
 from routines import image_reader, image_to_adjacency_list, Graph, animate_path, save_solution_img
-
+from settings import ABSPATH_TO_IMAGES, ABSPATH_TO_SOL_IMAGES, ABSPATH_TO_SPARSE_IMAGES
 random.seed(38)
-
-PATH_TO_THIS_FILE: Path = Path(__file__).resolve()
 
 
 def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: str,
            create_plot: bool, create_animation: bool, distance: int, use_bresenhams: bool,
-           four_neighbor_model: bool):
+           four_neighbor_model: bool, simulation: str):
     """
     Driver for the Shortest Path over Images project
 
@@ -29,8 +27,11 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
     """
 
     print(f'Running Shortest Path analysis on: {image_name}')
-    ABSPATH_TO_IMG: Path = PATH_TO_THIS_FILE.parent / 'images' / image_name
-    ABSPATH_TO_SOL_IMG: Path = PATH_TO_THIS_FILE.parent / 'solutions' / image_name
+    if simulation == 'sparse':
+        ABSPATH_TO_IMG: Path = ABSPATH_TO_SPARSE_IMAGES / 'sparse_imgs' / image_name
+    else:
+        ABSPATH_TO_IMG: Path = ABSPATH_TO_IMAGES / image_name
+    ABSPATH_TO_SOL_IMG: Path = ABSPATH_TO_SOL_IMAGES / image_name
 
     # STEP 1. Read a chosen image
     image: np.ndarray = image_reader(ABSPATH_TO_IMG=ABSPATH_TO_IMG)
@@ -58,14 +59,17 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
     # Understand the relationship between the distance value when finding the adjacency list and the path length.
     # Understand how
 
+    return solution.solution_path_weight, solution.nodes_visited
+
 
 if __name__ == "__main__":
-    driver(image_name='image50.png',
+    driver(image_name='image30.png',
            distance=1,
            start_state=(0, 0),
-           end_state=(49, 49),  # <-- (29, 29), (6, 6), ...
+           end_state=(29, 29),  # <-- (29, 29), (6, 6), ...
            weight_calc='euclidean',  # <-- 'euclidean' or 'manhattan'
            four_neighbor_model=True,  # <-- 4-neighbor model or 8-neighbor model. Only use 4-neighbor when distance=1
-           use_bresenhams=False,
+           use_bresenhams=True,
            create_plot=True,
-           create_animation=False)
+           create_animation=False,
+           simulation='none')
