@@ -9,7 +9,22 @@ from pathlib import Path
 from PIL import Image
 import cv2
 
-PATH_TO_THIS_FILE: Path = Path(__file__).resolve()
+from settings import ABSPATH_TO_SPARSE_IMAGES, ABSPATH_TO_IMAGES
+
+
+def build_custom_maze():
+
+    arr = [[255, 255, 255, 255, 255], [0, 0, 0, 0, 255], [255, 255, 255, 255, 255], [255, 0, 0, 0, 0],
+           [255, 255, 255, 255, 255]]
+    data = np.array(arr)
+
+    path_to_image: Path = ABSPATH_TO_IMAGES / 'custom_maze.png'
+    path_to_image: str = str(path_to_image)
+
+    img = data.astype(np.uint8)
+    cv2.imwrite(path_to_image, img)
+    print(f'Image successfully saved at the following location: \n {path_to_image}')
+
 
 
 def build_img(img_size: int, land_density: float, path_to_image: str):
@@ -60,7 +75,7 @@ def generate_sparse_images(side_length: int):
         for j in range(num_images_per_density):
             j += 1
             file_name: str = f"image{side_length}_density{i}_{j}.png"
-            ABSPATH_TO_IMG: Path = PATH_TO_THIS_FILE.parent / 'images' / 'sparse_imgs' / file_name
+            ABSPATH_TO_IMG: Path = ABSPATH_TO_SPARSE_IMAGES / file_name
             build_img(img_size=side_length, land_density=i, path_to_image=str(ABSPATH_TO_IMG))
 
 
@@ -71,4 +86,6 @@ if __name__ == "__main__":
     side_length: int = 20
 
     # generate the sparse imaged we will use for testing
-    generate_sparse_images(side_length=side_length)
+    # generate_sparse_images(side_length=side_length)
+
+    build_custom_maze()
