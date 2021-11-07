@@ -12,10 +12,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 from driver import driver
-from settings import ABSPATH_TO_SPARSE_IMAGES, ABSPATH_TO_SPARSE_SIM_RESULTS
+from settings import ABSPATH_TO_SPARSE_IMAGES, ABSPATH_TO_SPARSE_SIM_RESULTS, ABSPATH_TO_BOXPLOTS
 
 
-def boxplot_dict(input_dict: dict, boxplot_title: str, image_type: str = 'svg', save_results: bool = False, show_results: bool = True):
+def boxplot_dict(fname: str, input_dict: dict, boxplot_title: str, image_type: str = 'svg',
+                 save_results: bool = False, show_results: bool = True):
     """
     Generate a boxplot given a dictionary of keys to lists or tuples of ints or floats. The resulting image can be
     saved using different file formats such as .png or .jpeg, but .svg provides the best clarity in papers and
@@ -40,18 +41,23 @@ def boxplot_dict(input_dict: dict, boxplot_title: str, image_type: str = 'svg', 
         key_list.append(key)
         value_list.append(tuple(val))
 
-    # boxplot algorithm comparison
-    fig = plt.figure()
+    fig = plt.figure(figsize=(12, 8))
+    # fig = plt.figure()
     fig.suptitle(boxplot_title)
     ax = fig.add_subplot(111)
     plt.boxplot(value_list)
     ax.set_xticklabels(key_list)
 
+    if save_results:
+        fig_name: str = f'{fname}.{image_type}'
+        full_path: Path = ABSPATH_TO_BOXPLOTS / fig_name
+        plt.savefig(str(full_path))
+
     if show_results:
         plt.show()
 
 
-def plot_simulation_results(save_results: bool = False, show_results: bool = True):
+def plot_simulation_results(save_results: bool = True, show_results: bool = True):
 
     weights_path = ABSPATH_TO_SPARSE_SIM_RESULTS / 'weights.pickle'
     nodes_visited_path = ABSPATH_TO_SPARSE_SIM_RESULTS / 'nodes_visited.pickle'
@@ -66,11 +72,11 @@ def plot_simulation_results(save_results: bool = False, show_results: bool = Tru
 
     # generate a boxplot for the weights
     boxplot_dict(input_dict=weights_dict, boxplot_title='Weights', show_results=show_results,
-                 save_results=save_results)
+                 save_results=save_results, fname='weights_vs_densities', image_type='svg')
 
     # generate a boxplot for the nodes visited
     boxplot_dict(input_dict=nodes_visited_dict, boxplot_title='Nodes Visited', show_results=show_results,
-                 save_results=save_results)
+                 save_results=save_results, fname='nodes_vs_densities')
 
     print('Simulation results have been saves successfully')
 
@@ -128,7 +134,7 @@ def run_sparse_simulation():
 
 if __name__ == "__main__":
     # run the simulation, this step can be quite lengthy as Dijkstras is being run on many images
-    run_sparse_simulation()
+    # run_sparse_simulation()
 
     # load the resulting dictionaries from disk and plot them
-    plot_simulation_results()
+    plot_simulation_results(show_results=True, save_results=True)
