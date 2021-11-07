@@ -37,7 +37,7 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
     image: np.ndarray = image_reader(ABSPATH_TO_IMG=ABSPATH_TO_IMG)
 
     # STEP 2: Convert the image to an adjacency list
-    adj_list: dict = image_to_adjacency_list(img=image, distance=distance, use_bresenhams=False,
+    adj_list: dict = image_to_adjacency_list(img=image, distance=distance, use_bresenhams=use_bresenhams,
                                              weight_calc=weight_calc, four_neighbor_model=four_neighbor_model)
 
     # STEP 3: Runs dijkstras to find the shortest path
@@ -49,7 +49,7 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
     if create_plot:
         save_solution_img(np_image=image, fpath=str(ABSPATH_TO_SOL_IMG), chain=solution.solution_path, show_img=True,
                           weight=solution.solution_path_weight, neighbor_distance=distance,
-                          use_bresenhams=use_bresenhams)
+                          use_bresenhams=use_bresenhams, four_neighbor_model=four_neighbor_model)
 
     # STEP 5: creates an animation of the path being generated
     if create_animation:
@@ -63,13 +63,13 @@ def driver(image_name: str, start_state: tuple, end_state: tuple, weight_calc: s
 
 
 if __name__ == "__main__":
-    driver(image_name='image30.png',
-           distance=1,
+    driver(image_name='custom_maze.png',
+           distance=3,
            start_state=(0, 0),
-           end_state=(29, 29),  # <-- (29, 29), (6, 6), ...
+           end_state=(4, 4),  # <-- (29, 29), (6, 6), ...
            weight_calc='euclidean',  # <-- 'euclidean' or 'manhattan'
            four_neighbor_model=False,  # <-- 4-neighbor model or 8-neighbor model. Only use 4-neighbor when distance=1
            use_bresenhams=True,
            create_plot=True,
            create_animation=False,
-           simulation='none')
+           simulation='None')
