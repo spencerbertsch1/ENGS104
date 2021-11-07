@@ -9,6 +9,7 @@ import math
 from heapq import heappush, heappop, heapify
 
 import numpy as np
+from bresenham import bresenham
 import cv2
 from matplotlib import pyplot as plt
 import matplotlib.pyplot as cplot
@@ -110,8 +111,7 @@ class Graph:
                     sol.solution_path_weight = 1000
                 else:
                     # get the weight of the final step to then goal node
-                    weight_of_final_step = current_node.neighbors[solution_path[-2]]
-                    sol.solution_path_weight = round(current_node.distance + weight_of_final_step, 2)
+                    sol.solution_path_weight = round(current_node.distance, 2)
                 return sol
 
             for neighbor_state, weight in current_node.neighbors.items():
@@ -236,6 +236,17 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
                     neighbors.append((icheck, jcheck))
         return neighbors
 
+    # create a list of all the cells in the graph
+    blocked_cells = []
+    for i in range(len(img)):
+        for j in range(len(img)):
+            # only add the illegal cells to the list
+            if new_array[i][j] == 0:
+                illegal_cell: tuple = (i, j)
+                blocked_cells.append(illegal_cell)
+    # convert blocked_cells to a set for later
+    blocked_cells = set(blocked_cells)
+
     # now it's time to create the adjacency list!
     adjacency_list = {}
     for i in range(len(new_array)):
@@ -247,16 +258,33 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
                 if new_array[n[0]][n[1]] == 1:
                     valid_neighbors.append(n)
 
-            # TODO implement use_bresenhams line algorithm to discount any squares
-            #  if we pass through a block to get there
             if use_bresenhams:
-                # Here we would prune the cells in valid_neighbors to ONLY those achievable
-                # through a straight line without hitting a blocker
-                pass
+                # we also exclude neighbors that required the robot to "step over" an illegal cell
+                bresenhams_valid_neighbors = []
+                for neighbor in valid_neighbors:
+                    x1 = i
+                    y1 = j
+                    x2 = neighbor[0]
+                    y2 = neighbor[1]
+                    # Here we would prune the cells in valid_neighbors to ONLY those achievable
+                    # through a straight line without hitting a blocked_cell
+                    cells_intersected: set = set(bresenham(x1, y1, x2, y2))
 
-            # add the cell-list pair to the adjacency list dictionary
-            cell: tuple = (i, j)
-            adjacency_list[cell] = valid_neighbors
+                    # if we're intersecting a cell that's blocked, then we don't add the neighbor to the graph
+                    intersected_illegal_cells = cells_intersected.intersection(blocked_cells)
+
+                    # if the neighbor is legal AND we didn't intersect any illegal cells on the way there, we add it
+                    if len(intersected_illegal_cells) == 0:
+                        bresenhams_valid_neighbors.append(neighbor)
+
+                # add the cell-list pair to the adjacency list dictionary
+                cell: tuple = (i, j)
+                adjacency_list[cell] = bresenhams_valid_neighbors
+
+            else:
+                # add the cell-list pair to the adjacency list dictionary
+                cell: tuple = (i, j)
+                adjacency_list[cell] = valid_neighbors
 
     # add the path weights as either the euclidean or the manhattan distance between nodes in the graph
     new_adjacency_list = {}
@@ -354,7 +382,7 @@ def animate_path(np_image: np.ndarray, fpath: str, chain: list, save_final_img: 
 
 
 def save_solution_img(np_image: np.ndarray, fpath: str, chain: list, show_img: bool, weight: float,
-                      neighbor_distance: int, use_bresenhams: bool):
+                      neighbor_distance: int, use_bresenhams: bool, four_neighbor_model: bool):
     # get a list of edges from the list of states
     edges = []
     for i in range(len(chain)):
@@ -382,8 +410,8 @@ def save_solution_img(np_image: np.ndarray, fpath: str, chain: list, show_img: b
         plt.plot(line[0], line[1], color="red", linewidth=3)
 
     plt.imshow(np_image, origin='lower')
-    plt.title(f'SP-Weight: {weight}, Neighbor-Distance: {neighbor_distance}, \n Bresenhams: {use_bresenhams}',
-              fontsize=13)
+    plt.title(f'SP-Weight: {weight}, Neighbor-Distance: {neighbor_distance}, \n Bresenhams: {use_bresenhams}, '
+              f'4-Neighbor Model: {four_neighbor_model}', fontsize=13)
 
     # uncomment the below line to save as a svg (better resolution on papers and slide decks)
     fpath = f'{fpath[:-4]}.svg'
