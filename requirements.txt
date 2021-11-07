@@ -1,2 +1,4 @@
 grip==4.5.2
 opencv-python==4.5.4.58
+pandas==1.3.4
+bresenham==0.2.1
