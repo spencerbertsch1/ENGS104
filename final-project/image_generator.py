@@ -14,7 +14,10 @@ from settings import ABSPATH_TO_SPARSE_IMAGES, ABSPATH_TO_IMAGES
 
 def build_custom_maze():
 
-    arr = [[255, 255, 255, 255, 255], [0, 0, 0, 0, 255], [255, 255, 255, 255, 255], [255, 0, 0, 0, 0],
+    arr = [[255, 255, 255, 255, 255],
+           [255,   0,   0,   0,   0],
+           [255, 255, 255, 255, 255],
+           [   0,  0,   0,   0, 255],
            [255, 255, 255, 255, 255]]
     data = np.array(arr)
 
