@@ -179,6 +179,27 @@ def image_reader(ABSPATH_TO_IMG: Path) -> np.ndarray:
     return new_image
 
 
+def get_bresenham_cells(x1: int, y1: int, x2: int, y2: int, use_library: bool) -> set:
+    """
+    Function to find the set of cells that a line intersects gicen coordinates [x1, y1] and [x2, y2]
+
+    :param x1:
+    :param y1:
+    :param x2:
+    :param y2:
+    :param use_library:
+    :return:
+    """
+    if use_library:
+        cells_intersected: set = set(bresenham(x1, y1, x2, y2))
+    else:
+        # here we could add a custom function with a different implementation of the bresenahm line algorithm
+        # this is left as an exercise for the keen reader.
+        cells_intersected = set()
+
+    return cells_intersected
+
+
 def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool, weight_calc: str,
                             four_neighbor_model: bool) -> dict:
     """
@@ -268,7 +289,7 @@ def image_to_adjacency_list(img: np.ndarray, distance: int, use_bresenhams: bool
                     y2 = neighbor[1]
                     # Here we would prune the cells in valid_neighbors to ONLY those achievable
                     # through a straight line without hitting a blocked_cell
-                    cells_intersected: set = set(bresenham(x1, y1, x2, y2))
+                    cells_intersected: set = get_bresenham_cells(x1=x1, y1=y1, x2=x2, y2=y2, use_library=True)
 
                     # if we're intersecting a cell that's blocked, then we don't add the neighbor to the graph
                     intersected_illegal_cells = cells_intersected.intersection(blocked_cells)
