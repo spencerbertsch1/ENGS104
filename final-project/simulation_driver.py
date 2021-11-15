@@ -15,7 +15,29 @@ from driver import driver
 from settings import ABSPATH_TO_SPARSE_IMAGES, ABSPATH_TO_SPARSE_SIM_RESULTS, ABSPATH_TO_BOXPLOTS
 
 
-def boxplot_dict(fname: str, input_dict: dict, boxplot_title: str, image_type: str = 'svg',
+# def box_plot(data, edge_color, fill_color):
+#     # bp = ax.boxplot(data, patch_artist=True)
+#
+#     for element in ['boxes', 'whiskers', 'fliers', 'means', 'medians', 'caps']:
+#         plt.setp(bp[element], color=edge_color)
+#
+#     for patch in bp['boxes']:
+#         patch.set(facecolor=fill_color)
+#
+#     return bp
+#
+#     example_data1 = [[1,2,0.8], [0.5,2,2], [3,2,1]]
+#     example_data2 = [[5,3, 4], [6,4,3,8], [6,4,9]]
+#
+#     fig, ax = plt.subplots()
+#     bp1 = box_plot(example_data1, 'red', 'tan')
+#     bp2 = box_plot(example_data2, 'blue', 'cyan')
+#     ax.legend([bp1["boxes"][0], bp2["boxes"][0]], ['Data 1', 'Data 2'])
+#     ax.set_ylim(0, 10)
+#     plt.show()
+
+
+def boxplot_dict(fname: str, input_dict: dict, boxplot_title: str, x_label: str, y_label: str, image_type: str = 'svg',
                  save_results: bool = False, show_results: bool = True):
     """
     Generate a boxplot given a dictionary of keys to lists or tuples of ints or floats. The resulting image can be
@@ -41,12 +63,11 @@ def boxplot_dict(fname: str, input_dict: dict, boxplot_title: str, image_type: s
         key_list.append(key)
         value_list.append(tuple(val))
 
-    fig = plt.figure(figsize=(12, 8))
-    # fig = plt.figure()
-    fig.suptitle(boxplot_title)
-    ax = fig.add_subplot(111)
-    plt.boxplot(value_list)
-    ax.set_xticklabels(key_list)
+    fig = plt.figure(figsize=(14, 8))
+    fig.suptitle(f' \n {boxplot_title}', fontsize=20)
+    plt.xlabel(x_label, fontsize=16)
+    plt.ylabel(f'{y_label} \n', fontsize=16)
+    plt.boxplot(value_list, showmeans=True)  # <-- use patch_artist=True to alter colors
 
     if save_results:
         fig_name: str = f'{fname}.{image_type}'
@@ -71,12 +92,22 @@ def plot_simulation_results(save_results: bool = True, show_results: bool = True
     print(weights_dict, nodes_visited_dict)
 
     # generate a boxplot for the weights
-    boxplot_dict(input_dict=weights_dict, boxplot_title='Weights', show_results=show_results,
-                 save_results=save_results, fname='weights_vs_densities', image_type='svg')
+    boxplot_dict(input_dict=weights_dict, boxplot_title='SP-Weight vs. Blocked Cell Density (8-Neighbor)',
+                 show_results=show_results,
+                 save_results=save_results,
+                 fname='weights_vs_densities_8Neighbor',
+                 image_type='svg',
+                 x_label='Blocked Cell Density (Smaller numbers are more dense)',
+                 y_label='SP-Weight')
 
     # generate a boxplot for the nodes visited
-    boxplot_dict(input_dict=nodes_visited_dict, boxplot_title='Nodes Visited', show_results=show_results,
-                 save_results=save_results, fname='nodes_vs_densities')
+    boxplot_dict(input_dict=nodes_visited_dict,
+                 boxplot_title='Nodes Visited vs. Blocked Cell Density (8-Neighbor)',
+                 show_results=show_results,
+                 save_results=save_results,
+                 fname='nodes_vs_densities_8Neighbor',
+                 x_label='Blocked Cell Density (Smaller numbers are more dense)',
+                 y_label='Nodes Visited During Search')
 
     print('Simulation results have been saves successfully')
 
